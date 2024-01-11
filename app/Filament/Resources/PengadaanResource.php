@@ -66,6 +66,18 @@ class PengadaanResource extends Resource
                             return $get('harga') * $get('volume');
                         })
                         ->columnSpan(1),
+                    Forms\Components\TextInput::make('alasan')
+                        ->required()
+                        ->columnSpan(3),
+                        Select::make('kegiatan_id')
+                        ->label('Pilih Komponen Kegiatan ')
+                        ->relationship(
+                            name:'kegiatan',
+                            titleAttribute: 'subtitle'
+                        )
+                        ->searchable()
+                        ->required()
+                        ->columnSpan(3),
                 ])->columns(6),
             ]);
     }
@@ -91,8 +103,14 @@ class PengadaanResource extends Resource
                 Tables\Columns\TextColumn::make('volume')
                     ->numeric()
                     ->sortable(),
-                    // TextColumn::make('nilai')
-                    // ->state(function)
+                Tables\Columns\TextColumn::make('alasan')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('nilai')
+                    ->state(function(Pengadaan $record): float{
+                        return $record->komponen->nilai * $record->volume;
+                    }),
+                Tables\Columns\TextColumn::make('kegiatan.subtitle')
+                    ->searchable(),
             ])
             ->filters([
                 //
